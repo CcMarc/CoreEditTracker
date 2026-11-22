@@ -6,7 +6,7 @@
  * @author      Marcopolo
  * @copyright   2026
  * @license     GNU General Public License (GPL) - https://www.zen-cart.com/license/2_0.txt
- * @version     1.0.1
+ * @version     1.0.2
  * @updated     11-22-2026
  * @github      https://github.com/CcMarc/CoreEditTracker
  */
@@ -37,6 +37,21 @@ $cetBytes = static function ($bytes): string {
     return $bytes >= 1024 ? sprintf(CET_SIZE_KB, number_format($bytes / 1024, 1)) : sprintf(CET_SIZE_B, $bytes);
 };
 $cetDate = static fn($time): string => $time ? date('Y-m-d H:i', (int)$time) : '';
+$cetIniBytes = static function (string $name): int {
+    $value = trim((string)ini_get($name));
+    $number = (float)$value;
+    switch (strtolower(substr($value, -1))) {
+        case 'g':
+            $number *= 1024;
+            // no break
+        case 'm':
+            $number *= 1024;
+            // no break
+        case 'k':
+            $number *= 1024;
+    }
+    return (int)$number;
+};
 $cetText = static function (string $prefix, string $code, string $fallback = ''): string {
     $key = $prefix . strtoupper(preg_replace('~[^A-Za-z0-9]+~', '_', $code));
     return defined($key) ? (string)constant($key) : ($fallback !== '' ? $fallback : $code);
@@ -128,6 +143,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 break;
             }
             $cetResult = $cetTracker->useZip($cetPlaced, false, $cetName);
+            if ($cetResult['ok']) {
+                $messageStack->add_session(sprintf(CET_MSG_RELEASE_OK, $cetEsc($cetResult['version']), (int)$cetResult['files']), 'success');
+                $cetReturn = '';
+            } else {
+                $messageStack->add_session(sprintf(CET_MSG_REFUSED, $cetEsc($cetRefused($cetResult))) . ' ' . CET_MSG_NOTHING_KEPT . ' ' . CET_MSG_PLACED_LEFT, 'error');
+            }
+            break;
+
+        case 'use_path':
+            $cetGiven = DataFolder::zipAt(is_string($_POST['zip_path'] ?? null) ? $_POST['zip_path'] : '');
+            if (!isset($cetGiven['file'])) {
+                $messageStack->add_session(sprintf(CET_MSG_PATH_REFUSED, $cetEsc($cetText('CET_PATH_REASON_', (string)$cetGiven['reason']))), 'error');
+                break;
+            }
+            $cetResult = $cetTracker->useZip($cetGiven['file'], false, basename($cetGiven['file']));
             if ($cetResult['ok']) {
                 $messageStack->add_session(sprintf(CET_MSG_RELEASE_OK, $cetEsc($cetResult['version']), (int)$cetResult['files']), 'success');
                 $cetReturn = '';
@@ -551,6 +581,8 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
         .cet-choice-on { border: 2px solid #1f6feb; padding: 10px 12px; background: #f2f7ff; }
         .cet-choice > span { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
         .cet-choice .cet-input { width: 100%; }
+        .cet-input.cet-wide { display: block; width: 100%; max-width: 560px; }
+        .cet-rule { border: 0; border-top: 1px solid #e1e5eb; margin: 16px 0; }
         .cet-choice label { margin: 0; font-weight: 400; }
         .cet-check { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 8px; font-weight: 400; font-size: 13px; }
         .cet-steps { margin: 0; padding: 12px 14px 12px 36px; font-size: 13px; line-height: 22px; }
@@ -589,13 +621,50 @@ if ($cetRelease === null) {
                         <p class="cet-warn-text cet-strong"><?= $cetEsc(sprintf(CET_FIRST_RUN_OUTDATED, $cetVersion, $cetOutdated['version'])) ?></p>
                     <?php } ?>
                     <p><?= $cetEsc(sprintf(CET_FIRST_RUN_TEXT, $cetVersion)) ?></p>
-                    <?= zen_draw_form('cet_upload', FILENAME_CORE_EDIT_TRACKER, '', 'post', 'enctype="multipart/form-data"') ?>
-                        <input type="hidden" name="action" value="upload">
-                        <p><label for="cet-release-zip"><?= $cetEsc(CET_UPLOAD_LABEL) ?></label>
-                            <input type="file" id="cet-release-zip" name="release_zip" accept=".zip,application/zip" required></p>
-                        <p class="cet-muted cet-small"><?= $cetEsc(sprintf(CET_UPLOAD_LIMIT, (string)ini_get('upload_max_filesize'))) ?></p>
-                        <button type="submit" class="cet-btn cet-btn-primary"><?= $cetEsc(CET_UPLOAD_BUTTON) ?></button>
-                    </form>
+                    <?php
+                    $cetUploads = (bool)ini_get('file_uploads');
+                    $cetLimits = array_filter([$cetIniBytes('upload_max_filesize'), $cetIniBytes('post_max_size')]);
+                    $cetLimit = $cetLimits === [] ? 0 : min($cetLimits);
+                    $cetSmall = !$cetUploads || ($cetLimit > 0 && $cetLimit < ReleaseZip::EXPECTED_ZIP_BYTES);
+                    $cetUploadForm = static function () use ($cetEsc, $cetBytes, $cetLimit, $cetSmall): void {
+                        ?>
+                        <?= zen_draw_form('cet_upload', FILENAME_CORE_EDIT_TRACKER, '', 'post', 'enctype="multipart/form-data"') ?>
+                            <input type="hidden" name="action" value="upload">
+                            <p><label for="cet-release-zip"><?= $cetEsc(CET_UPLOAD_LABEL) ?></label>
+                                <input type="file" id="cet-release-zip" name="release_zip" accept=".zip,application/zip" required></p>
+                            <?php if (!$cetSmall && $cetLimit > 0) { ?>
+                                <p class="cet-muted cet-small"><?= $cetEsc(sprintf(CET_UPLOAD_LIMIT, $cetBytes($cetLimit))) ?></p>
+                            <?php } ?>
+                            <button type="submit" class="cet-btn<?= $cetSmall ? '' : ' cet-btn-primary' ?>"><?= $cetEsc(CET_UPLOAD_BUTTON) ?></button>
+                        </form>
+                        <?php
+                    };
+                    $cetPathForm = static function () use ($cetEsc, $cetVersion, $cetSmall): void {
+                        ?>
+                        <?= zen_draw_form('cet_path', FILENAME_CORE_EDIT_TRACKER) ?>
+                            <input type="hidden" name="action" value="use_path">
+                            <p><label for="cet-zip-path"><?= $cetEsc(CET_PATH_LABEL) ?></label>
+                                <input type="text" id="cet-zip-path" name="zip_path" class="cet-input cet-mono cet-wide" placeholder="/full/path/to/zencart-<?= $cetEsc($cetVersion) ?>.zip" required></p>
+                            <p class="cet-muted cet-small"><?= $cetEsc(CET_PATH_TEXT) ?></p>
+                            <button type="submit" class="cet-btn<?= $cetSmall ? ' cet-btn-primary' : '' ?>"><?= $cetEsc(CET_PATH_BUTTON) ?></button>
+                        </form>
+                        <?php
+                    };
+                    if ($cetSmall) {
+                        ?>
+                        <p class="cet-warn-text cet-strong"><?= $cetEsc($cetUploads ? sprintf(CET_UPLOAD_SMALL, $cetBytes($cetLimit)) : CET_UPLOAD_OFF) ?></p>
+                        <?php
+                        $cetPathForm();
+                        if ($cetUploads) {
+                            ?><hr class="cet-rule"><?php
+                            $cetUploadForm();
+                        }
+                    } else {
+                        $cetUploadForm();
+                        ?><hr class="cet-rule"><?php
+                        $cetPathForm();
+                    }
+                    ?>
                 </div>
             </section>
             <section class="cet-card">

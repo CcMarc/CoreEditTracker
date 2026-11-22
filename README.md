@@ -2,7 +2,7 @@
 
 ![CoreEditTracker](https://socialify.git.ci/CcMarc/CoreEditTracker/image?custom_description=See+every+Zen+Cart+core+file+you+changed+and+carry+your+edits+to+the+next+release&description=1&font=Inter&forks=1&issues=1&language=1&name=1&owner=0&pattern=Signal&pulls=1&stargazers=1&theme=Auto)
 
-[![Version](https://badgen.net/badge/version/v1.0.1/0e8a16)](https://github.com/CcMarc/CoreEditTracker/blob/main/CHANGELOG.md) [![PHP](https://badgen.net/badge/php/8.0%2B/777BB4)](https://www.php.net/)
+[![Version](https://badgen.net/badge/version/v1.0.2/0e8a16)](https://github.com/CcMarc/CoreEditTracker/blob/main/CHANGELOG.md) [![PHP](https://badgen.net/badge/php/8.0%2B/777BB4)](https://www.php.net/)
 [![Zen Cart](https://badgen.net/badge/zen%20cart/2.1.0%2B/F6851F)](https://www.zen-cart.com/)
 [![License](https://badgen.net/badge/license/GPL-2.0/blue)](https://www.zen-cart.com/license/2_0.txt)
 [![Last Commit](https://badgen.net/github/last-commit/CcMarc/CoreEditTracker/main)](https://github.com/CcMarc/CoreEditTracker/commits/main)
@@ -75,9 +75,15 @@ runs, for example `zencart-2.2.2.zip`. Download it from
 [zen-cart.com](https://www.zen-cart.com/) and then do one of these:
 
 - **Upload it** on the page.
+- **Give its path** if the zip is already on your server. Type the full
+  path, for example `/home/you/zencart-2.2.2.zip`. The tracker checks it
+  like an upload and keeps its own copy. Your file stays where it is.
 - **Place it in the data folder** by FTP or your file manager and reload
-  the page. This suits servers whose upload limit is smaller than the zip.
-  The page shows the folder's exact path.
+  the page. The page shows the folder's exact path.
+
+The Zen Cart zip is about 10 MB. When your server's upload limit is smaller
+than that, or uploads are turned off, the page says so and puts the path
+option first.
 
 The zip is checked before it is kept. It must be a Zen Cart release of the
 same version as your store, with no entry that is a symbolic link or that
@@ -300,7 +306,7 @@ Edit Tracker > Accept companion plugins, on by default, switches this off.
 ## Translations
 
 All page text lives in language files, in
-`zc_plugins/CoreEditTracker/v1.0.1/admin/includes/languages/english/`:
+`zc_plugins/CoreEditTracker/v1.0.2/admin/includes/languages/english/`:
 
 - `lang.core_edit_tracker.php`: the page itself and the `README.md` placed
   in the export.

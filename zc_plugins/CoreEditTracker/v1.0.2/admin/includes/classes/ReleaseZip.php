@@ -6,8 +6,8 @@
  * @author      Marcopolo
  * @copyright   2026
  * @license     GNU General Public License (GPL) - https://www.zen-cart.com/license/2_0.txt
- * @version     1.0.0
- * @updated     11-21-2026
+ * @version     1.0.2
+ * @updated     11-22-2026
  * @github      https://github.com/CcMarc/CoreEditTracker
  */
 namespace Zencart\Plugins\Admin\CoreEditTracker;
@@ -24,6 +24,8 @@ class ReleaseZip
     public const MAX_ZIP_BYTES = 64 * 1024 * 1024;
     public const MAX_ENTRY_BYTES = 16 * 1024 * 1024;
     public const MAX_ENTRIES = 20000;
+    // Zen Cart 2.x release zips are 9 to 10 MB. An upload limit below this is treated as too small.
+    public const EXPECTED_ZIP_BYTES = 12 * 1024 * 1024;
 
     // Files every Zen Cart release has had. The version file is checked apart from these.
     private const SIGNATURE_PATHS = [

@@ -3,6 +3,20 @@
 File headers (`@version` / `@updated`) record the release that last modified
 each file, not the current release, the same convention as Zen Cart core.
 
+## v1.0.2 (11-22-2026)
+
+Two more ways through the first screen, for servers where the upload does
+not fit.
+
+- New option on the first screen: give the full path of a release zip that
+  is already on the server. It is checked like an upload, the tracker keeps
+  its own copy and your file stays where it is.
+- When the server's upload limit is too small for the Zen Cart zip, or
+  uploads are turned off, the page says so and puts the path option first.
+- The upload limit shown is the smaller of `upload_max_filesize` and
+  `post_max_size`.
+- No change to scanning, compare or export.
+
 ## v1.0.1 (11-22-2026)
 
 HTML fixes on the admin page. No change to scanning, compare or export.

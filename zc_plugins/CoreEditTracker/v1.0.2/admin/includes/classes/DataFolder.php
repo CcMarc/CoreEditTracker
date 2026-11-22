@@ -6,8 +6,8 @@
  * @author      Marcopolo
  * @copyright   2026
  * @license     GNU General Public License (GPL) - https://www.zen-cart.com/license/2_0.txt
- * @version     1.0.0
- * @updated     11-21-2026
+ * @version     1.0.2
+ * @updated     11-22-2026
  * @github      https://github.com/CcMarc/CoreEditTracker
  */
 namespace Zencart\Plugins\Admin\CoreEditTracker;
@@ -107,6 +107,26 @@ class DataFolder
             return ['reason' => 'not_writable'];
         }
         return ['folder' => new self($target, true)];
+    }
+
+    /**
+     * A zip the owner already has on the server, by its full path. Only found, never changed.
+     */
+    public static function zipAt(string $path): array
+    {
+        $path = trim($path);
+        if ($path === '' || strlen($path) > 1024 || strpbrk($path, "\0") !== false
+            || ($path[0] !== '/' && preg_match('~^[A-Za-z]:[\\\\/]~', $path) !== 1)) {
+            return ['reason' => 'not_absolute'];
+        }
+        if (!self::allowedByBasedir(str_replace('\\', '/', $path))) {
+            return ['reason' => 'not_found'];
+        }
+        $real = realpath($path);
+        if ($real === false || !is_file($real) || !is_readable($real) || preg_match('~\.zip$~i', $real) !== 1) {
+            return ['reason' => 'not_found'];
+        }
+        return ['file' => $real];
     }
 
     /**

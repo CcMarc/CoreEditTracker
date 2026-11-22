@@ -6,8 +6,8 @@
  * @author      Marcopolo
  * @copyright   2026
  * @license     GNU General Public License (GPL) - https://www.zen-cart.com/license/2_0.txt
- * @version     1.0.0
- * @updated     11-21-2026
+ * @version     1.0.2
+ * @updated     11-22-2026
  * @github      https://github.com/CcMarc/CoreEditTracker
  */
 if (!defined('IS_ADMIN_FLAG')) {
@@ -20,11 +20,16 @@ $define = [
     'CET_INTRO_TIP' => 'Compares this store with the official Zen Cart release it runs. It only reads files. It never changes a store file.',
 
     'CET_FIRST_RUN_TITLE' => 'Give the tracker the official Zen Cart %s zip',
-    'CET_FIRST_RUN_TEXT' => 'Download the Zen Cart %s release zip from zen-cart.com and upload it here, or place it in the data folder and reload this page.',
+    'CET_FIRST_RUN_TEXT' => 'Download the Zen Cart %s release zip from zen-cart.com. Then upload it here, give its path if it is already on this server, or place it in the data folder and reload this page.',
     'CET_FIRST_RUN_OUTDATED' => 'This store now runs Zen Cart %1$s. The release zip the tracker holds is %2$s, so it can no longer be compared. Add the %1$s zip to carry on.',
     'CET_UPLOAD_LABEL' => 'Release zip',
     'CET_UPLOAD_BUTTON' => 'Upload and check',
     'CET_UPLOAD_LIMIT' => 'This server accepts uploads up to %s. A larger file can be placed in the data folder instead.',
+    'CET_UPLOAD_SMALL' => 'This server accepts uploads up to %s, which is likely too small for the Zen Cart zip. Give the path of a zip already on this server, or place it in the data folder.',
+    'CET_UPLOAD_OFF' => 'This server does not accept uploads. Give the path of a zip already on this server, or place it in the data folder.',
+    'CET_PATH_LABEL' => 'Zip already on this server',
+    'CET_PATH_TEXT' => 'The full path of the zip. It is checked like an upload and your file stays where it is.',
+    'CET_PATH_BUTTON' => 'Check and use',
     'CET_PLACED_TITLE' => 'Zip files found in the data folder',
     'CET_USE_PLACED' => 'Use this file',
     'CET_NO_PLACED' => 'No zip file in the data folder.',
@@ -303,6 +308,9 @@ Some files on this store belong to a plugin.
     'CET_MSG_REFUSED' => 'The zip was refused: %s.',
     'CET_MSG_NOTHING_KEPT' => 'Nothing of it was kept.',
     'CET_MSG_PLACED_LEFT' => 'Your file was left where it is.',
+    'CET_MSG_PATH_REFUSED' => 'That path cannot be used: %s.',
+    'CET_PATH_REASON_NOT_ABSOLUTE' => 'give the full path of the zip',
+    'CET_PATH_REASON_NOT_FOUND' => 'no readable zip file was found there',
     'CET_MSG_BAD_REQUEST' => 'The request was refused. Reload the page and try again.',
     'CET_MSG_UPLOAD_ERROR' => 'The upload did not arrive (code %s).',
     'CET_MSG_UPLOAD_TOO_LARGE' => 'The file is larger than this server accepts. Place it in the data folder instead.',

@@ -6,8 +6,8 @@
  * @author      Marcopolo
  * @copyright   2026
  * @license     GNU General Public License (GPL) - https://www.zen-cart.com/license/2_0.txt
- * @version     1.0.0
- * @updated     11-21-2026
+ * @version     1.0.1
+ * @updated     11-22-2026
  * @github      https://github.com/CcMarc/CoreEditTracker
  */
 if (!defined('IS_ADMIN_FLAG')) {
@@ -361,7 +361,7 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
     $tag = $wide ? 'section' : 'aside';
     ?>
     <<?= $tag ?> class="cet-card cet-folder" aria-labelledby="cet-folder-title">
-        <h2 class="cet-card-head" id="cet-folder-title"><?= $cetEsc($wide ? CET_FOLDER_IN_USE : CET_FOLDER_LABEL) ?><?= $cetTip(CET_FOLDER_TIP) ?></h2>
+        <div class="cet-card-head"><h2 id="cet-folder-title"><?= $cetEsc($wide ? CET_FOLDER_IN_USE : CET_FOLDER_LABEL) ?></h2><?= $cetTip(CET_FOLDER_TIP) ?></div>
         <div class="cet-card-body">
             <p class="cet-mono cet-strong"><?= $cetEsc($cetFolder->path) ?></p>
             <p><?= $cetFolderStatus() ?></p>
@@ -385,14 +385,14 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
                             </span>
                         </label>
                     <?php } ?>
-                    <label class="cet-choice<?= $current === 'custom' ? ' cet-choice-on' : '' ?>">
-                        <input type="radio" name="folder_choice" value="custom"<?= $current === 'custom' ? ' checked' : '' ?>>
+                    <div class="cet-choice<?= $current === 'custom' ? ' cet-choice-on' : '' ?>">
+                        <input type="radio" name="folder_choice" value="custom" id="cet-folder-custom"<?= $current === 'custom' ? ' checked' : '' ?>>
                         <span>
-                            <b><?= $cetEsc(CET_FOLDER_CUSTOM) ?></b>
+                            <label for="cet-folder-custom"><b><?= $cetEsc(CET_FOLDER_CUSTOM) ?></b></label>
                             <input type="text" name="folder_path" class="cet-input cet-mono" aria-label="<?= $cetEsc(CET_FOLDER_CUSTOM_LABEL) ?>" value="<?= $current === 'custom' ? $cetEsc(dirname(rtrim($cetFolder->path, '/')) . '/') : '' ?>" placeholder="/path/outside/the/web/root/">
-                            <span class="cet-small cet-muted"><?= $cetEsc(CET_FOLDER_CUSTOM_TEXT) ?></span>
+                            <label for="cet-folder-custom" class="cet-small cet-muted"><?= $cetEsc(CET_FOLDER_CUSTOM_TEXT) ?></label>
                         </span>
-                    </label>
+                    </div>
                 </fieldset>
                 <button type="submit" class="cet-btn"><?= $cetEsc(CET_FOLDER_MOVE) ?></button>
                 <?php if ($wide) { ?>
@@ -415,6 +415,8 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
         .cet *, .cet *::before, .cet *::after { box-sizing: border-box; }
         .cet a { color: #0b4fa8; }
         .cet h1 { margin: 0; font-size: 24px; line-height: 32px; font-weight: 700; }
+        .cet-title { font-size: 24px; line-height: 32px; }
+        .cet-title h1 { display: inline; }
         .cet h1.cet-path { font-size: 19px; line-height: 28px; font-variant: normal; text-transform: none; }
         .cet p { margin: 0 0 8px; }
         .cet-mono { font-family: var(--cet-mono); font-size: 12.5px; overflow-wrap: anywhere; }
@@ -448,6 +450,7 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
         .cet-chip-plugin { background: #eee9f8; color: #4b3a8c; }
         .cet-card { background: #fff; border: 1px solid #d9dee5; border-radius: 8px; overflow: hidden; margin: 0 0 16px; }
         .cet-card-head { margin: 0; padding: 10px 14px; background: #f4f6f8; font-size: 12px; line-height: 18px; font-weight: 600; color: #3f4b5a; text-transform: uppercase; letter-spacing: .04em; }
+        .cet-card-head h2 { display: inline; margin: 0; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit; }
         .cet-card-body { padding: 14px; }
         .cet-first { border-color: #1f6feb; }
         .cet-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 0 0 16px; }
@@ -515,7 +518,7 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
         .cet-change .cet-cr, .cet-add .cet-cr { background: #e8f1fe; }
         .cet-cl .cet-hl { background: #f5be8e; border-radius: 2px; }
         .cet-cr .cet-hl { background: #9dc3f9; border-radius: 2px; }
-        .cet-c.cet-x { background: repeating-linear-gradient(135deg, #f1f3f6 0 6px, #e4e8ee 6px 7px); }
+        .cet-c.cet-x { background: repeating-linear-gradient(135deg, #f1f3f6 0, #f1f3f6 6px, #e4e8ee 6px, #e4e8ee 7px); }
         .cet-r[tabindex] { cursor: pointer; }
         .cet-r.cet-sel { outline: 2px solid #1b2430; outline-offset: -2px; position: relative; }
         .cet-skip { text-align: center; background: #f4f6f8; border-top: 1px dashed #c5ccd6; border-bottom: 1px dashed #c5ccd6; font-size: 12px; line-height: 28px; color: #4d5968; }
@@ -537,7 +540,7 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
         .cet-legend i { display: inline-block; width: 18px; height: 14px; border-radius: 2px; border: 1px solid #c5ccd6; font: 700 11px/12px var(--cet-mono); text-align: center; vertical-align: -2px; margin-right: 6px; }
         .cet-key-l { background: #fdf0e6; border-color: #f5be8e !important; color: #7a3a06; }
         .cet-key-r { background: #e8f1fe; border-color: #9dc3f9 !important; color: #0a3f86; }
-        .cet-key-x { background: repeating-linear-gradient(135deg, #f1f3f6 0 6px, #e4e8ee 6px 7px); }
+        .cet-key-x { background: repeating-linear-gradient(135deg, #f1f3f6 0, #f1f3f6 6px, #e4e8ee 6px, #e4e8ee 7px); }
         .cet-what { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 12px; padding: 9px 14px; border-top: 1px solid #edf0f4; font-size: 13px; align-items: baseline; }
         .cet-what:first-of-type { border-top: 0; }
         .cet-what b { font-size: 18px; color: #0a3f86; }
@@ -548,6 +551,7 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
         .cet-choice-on { border: 2px solid #1f6feb; padding: 10px 12px; background: #f2f7ff; }
         .cet-choice > span { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1 1 auto; }
         .cet-choice .cet-input { width: 100%; }
+        .cet-choice label { margin: 0; font-weight: 400; }
         .cet-check { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 8px; font-weight: 400; font-size: 13px; }
         .cet-steps { margin: 0; padding: 12px 14px 12px 36px; font-size: 13px; line-height: 22px; }
         .cet-scanning { display: none; font-weight: 600; }
@@ -574,7 +578,7 @@ $cetFolderPanel = static function (bool $wide = false) use ($cetFolder, $cetFold
 if ($cetRelease === null) {
     $cetPlaced = $cetFolder->placedZips();
     ?>
-    <header class="cet-head"><div><h1><?= $cetEsc(HEADING_TITLE) ?><?= $cetTip(CET_INTRO_TIP) ?></h1></div></header>
+    <header class="cet-head"><div><div class="cet-title"><h1><?= $cetEsc(HEADING_TITLE) ?></h1><?= $cetTip(CET_INTRO_TIP) ?></div></div></header>
     <div class="cet-two">
         <div class="cet-main">
             <section class="cet-card cet-first">
@@ -604,13 +608,13 @@ if ($cetRelease === null) {
                         <span class="cet-mono"><?= $cetEsc($cetZip['name']) ?></span>
                         <span><?= $cetEsc($cetBytes($cetZip['size'])) ?></span>
                         <span class="cet-muted"><?= $cetEsc($cetDate($cetZip['time'])) ?></span>
-                        <span class="cet-row-end">
+                        <div class="cet-row-end">
                             <?= zen_draw_form('cet_use_' . md5($cetZip['name']), FILENAME_CORE_EDIT_TRACKER) ?>
                                 <input type="hidden" name="action" value="use_placed">
                                 <input type="hidden" name="placed" value="<?= $cetEsc($cetZip['name']) ?>">
                                 <button type="submit" class="cet-btn cet-btn-sm"><?= $cetEsc(CET_USE_PLACED) ?></button>
                             </form>
-                        </span>
+                        </div>
                     </div>
                 <?php } ?>
             </section>
@@ -783,7 +787,7 @@ if ($cetRelease === null) {
                             </nav>
                         </div>
                         <section class="cet-card" id="cet-detail" hidden>
-                            <h2 class="cet-card-head"><?= $cetEsc(CET_VIEW_SELECTED) ?><?= $cetTip(CET_VIEW_SELECTED_TIP) ?></h2>
+                            <div class="cet-card-head"><h2><?= $cetEsc(CET_VIEW_SELECTED) ?></h2><?= $cetTip(CET_VIEW_SELECTED_TIP) ?></div>
                             <div class="cet-scroll"><div class="cet-detail-rows">
                                 <div class="cet-detail-l"><span><?= $cetEsc($cetAgainst === 'base' ? CET_VIEW_SIDE_BASE : CET_VIEW_SIDE_RELEASE) ?></span><span id="cet-detail-ln"></span><span id="cet-detail-l"></span></div>
                                 <div class="cet-detail-r"><span><?= $cetEsc(CET_VIEW_SIDE_STORE) ?></span><span id="cet-detail-rn"></span><span id="cet-detail-r"></span></div>
@@ -919,7 +923,7 @@ if ($cetRelease === null) {
     ?>
     <header class="cet-head">
         <div>
-            <h1><?= $cetEsc(HEADING_TITLE) ?><?= $cetTip(CET_INTRO_TIP) ?></h1>
+            <div class="cet-title"><h1><?= $cetEsc(HEADING_TITLE) ?></h1><?= $cetTip(CET_INTRO_TIP) ?></div>
             <div class="cet-meta">
                 <span title="<?= $cetEsc($cetRelease['name'] . ', ' . $cetDate($cetRelease['added_at'])) ?>"><?= $cetEsc(sprintf(CET_RELEASE_IN_USE, $cetRelease['version'], number_format((int)$cetRelease['files']))) ?></span>
                 <?php if ($cetScan !== null) { ?>

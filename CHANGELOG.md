@@ -3,6 +3,19 @@
 File headers (`@version` / `@updated`) record the release that last modified
 each file, not the current release, the same convention as Zen Cart core.
 
+## v1.0.1 (11-22-2026)
+
+HTML fixes on the admin page. No change to scanning, compare or export.
+
+- The (i) tip beside the page title and the card titles is no longer placed
+  inside the heading element.
+- "A folder I choose" on the data folder card no longer wraps two form
+  controls in one label.
+- The "Use this file" form in the list of zip files found in the data folder
+  no longer sits inside a `span`.
+- Striped backgrounds use the longer gradient syntax, which older CSS
+  validators accept.
+
 ## v1.0.0 (11-21-2026)
 
 First release.

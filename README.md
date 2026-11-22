@@ -324,8 +324,9 @@ is not empty. No store file is touched.
 This plugin is provided as is, on a best effort basis. There is no
 guaranteed support or response time.
 
-- Questions and reports:
-  [GitHub issues](https://github.com/CcMarc/CoreEditTracker/issues).
+- Questions and general help: the
+  [Zen Cart support thread](https://www.zen-cart.com/threads/207515)
+  or [GitHub issues](https://github.com/CcMarc/CoreEditTracker/issues).
 
 ## Disclaimer
 
